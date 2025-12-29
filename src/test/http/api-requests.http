@@ -34,3 +34,8 @@ Authorization: {{accessToken}}
   "title": "Spring Boot 학습하기",
   "contents": "Spring Boot의 기본 개념과 REST API 개발 방법을 학습한다."
 }
+
+### 4. GET /todos - 1
+GET http://localhost:8080/todos?page=1&size=10&weather=맑음&startAt=2000-10-31T01:30:00
+Content-Type: application/json
+Authorization: {{accessToken}}
