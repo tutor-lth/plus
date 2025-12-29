@@ -122,3 +122,13 @@ Authorization: {{accessToken}}
 GET  http://localhost:8080/todos/search?page=1&size=10
 Content-Type: application/json
 Authorization: {{accessToken}}
+
+
+### 11. 담당자 등록
+POST http://localhost:8080/todos/1/managers
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+  "managerUserId": 1
+}
