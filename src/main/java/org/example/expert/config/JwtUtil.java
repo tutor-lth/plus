@@ -10,7 +10,6 @@ import org.example.expert.domain.common.exception.ServerException;
 import org.example.expert.domain.user.enums.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
@@ -20,6 +19,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    public static final String HEADER_KEY = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
@@ -50,7 +50,7 @@ public class JwtUtil {
     }
 
     public String substringToken(String tokenValue) {
-        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+        if (hasAuthorizationHeader(tokenValue)) {
             return tokenValue.substring(7);
         }
         throw new ServerException("Not Found Token");
@@ -63,4 +63,9 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public boolean hasAuthorizationHeader(String header) {
+        return header != null && header.startsWith(BEARER_PREFIX);
+    }
+
 }
