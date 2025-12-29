@@ -9,15 +9,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 @Getter
-public class SearchTodoRequest {
+public class SearchRequest {
 
     @Min(value = 1, message = "page는 1 이상이어야 합니다.")
     private Integer page = 1;
 
     @Min(value = 10, message = "size는 10 이상이어야 합니다.")
     private Integer size = 10;
-
-    private String weather;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startAt;
