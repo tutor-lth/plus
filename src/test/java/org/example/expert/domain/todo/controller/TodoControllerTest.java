@@ -1,5 +1,6 @@
 package org.example.expert.domain.todo.controller;
 
+import org.example.expert.config.*;
 import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -22,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TodoController.class)
+@Import({SecurityConfig.class, JwtUtil.class, CustomAuthenticationEntryPointHandler.class, CustomAccessDeniedHandler.class})
+@ActiveProfiles("test")
 class TodoControllerTest {
 
     @Autowired
@@ -31,8 +36,8 @@ class TodoControllerTest {
     private TodoService todoService;
 
     @Test
+    @WithMockAuthUser(userId = 1L, email = "email", nickname = "nickname", role = UserRole.USER)
     void todo_단건_조회에_성공한다() throws Exception {
-        // given
         long todoId = 1L;
         String title = "title";
         AuthUser authUser = new AuthUser(1L, "email", UserRole.USER, "nickname");
@@ -48,10 +53,8 @@ class TodoControllerTest {
                 LocalDateTime.now()
         );
 
-        // when
         when(todoService.getTodo(todoId)).thenReturn(response);
 
-        // then
         mockMvc.perform(get("/todos/{todoId}", todoId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(todoId))
@@ -59,15 +62,13 @@ class TodoControllerTest {
     }
 
     @Test
+    @WithMockAuthUser(userId = 1L, email = "email", nickname = "nickname", role = UserRole.USER)
     void todo_단건_조회_시_todo가_존재하지_않아_예외가_발생한다() throws Exception {
-        // given
         long todoId = 1L;
 
-        // when
         when(todoService.getTodo(todoId))
                 .thenThrow(new InvalidRequestException("Todo not found"));
 
-        // then
         mockMvc.perform(get("/todos/{todoId}", todoId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name()))
