@@ -49,3 +49,27 @@ Authorization: {{accessToken}}
   "title": "Spring Boot 학습하기",
   "contents": "Spring Boot의 기본 개념과 REST API 개발 방법을 학습한다."
 }
+
+### 7. POST /commets - 1
+POST http://localhost:8080/todos/1/comments
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+  "contents": "댓글 1"
+}
+
+
+### 7. POST /commets - 2
+POST http://localhost:8080/todos/1/comments
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+  "contents": "댓글 2"
+}
+
+### 7. GET /commets
+GET http://localhost:8080/todos/1/comments
+Content-Type: application/json
+Authorization: {{accessToken}}
