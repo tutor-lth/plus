@@ -39,3 +39,13 @@ Authorization: {{accessToken}}
 GET http://localhost:8080/todos?page=1&size=10&weather=맑음&startAt=2000-10-31T01:30:00
 Content-Type: application/json
 Authorization: {{accessToken}}
+
+### 5. POST /todos - 2
+POST http://localhost:8080/todos
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+  "title": "Spring Boot 학습하기",
+  "contents": "Spring Boot의 기본 개념과 REST API 개발 방법을 학습한다."
+}
