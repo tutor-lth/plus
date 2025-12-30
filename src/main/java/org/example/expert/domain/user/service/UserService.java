@@ -8,10 +8,15 @@ import org.example.expert.domain.user.dto.request.UserChangePasswordRequest;
 import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.repository.UserRepository;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public UserResponse getUser(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new InvalidRequestException("User not found"));
@@ -65,5 +71,22 @@ public class UserService {
         String userImageUrl = s3Service.uploadImage(file);
         user.changeImage(userImageUrl);
         return userImageUrl;
+    }
+
+    public List<UserResponse> getUsers(String nickname) {
+        String cacheKey = "users:nickname:" + nickname;
+        List<UserResponse> cachedUsers = (List<UserResponse>) redisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedUsers != null) {
+            return cachedUsers;
+        }
+
+        List<User> users = userRepository.findByNickname(nickname);
+        List<UserResponse> userResponses = users.stream()
+                .map(user -> new UserResponse(user.getId(), user.getEmail()))
+                .collect(Collectors.toList());
+
+        redisTemplate.opsForValue().set(cacheKey, userResponses, 10, TimeUnit.MINUTES);
+        return userResponses;
     }
 }

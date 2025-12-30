@@ -132,3 +132,8 @@ Authorization: {{accessToken}}
 {
   "managerUserId": 1
 }
+
+### 13. GET /users
+GET  http://localhost:8080/users?nickname=jpa_nickname12453
+Content-Type: application/json
+Authorization: {{accessToken}}

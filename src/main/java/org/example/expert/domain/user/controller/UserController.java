@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -33,5 +35,12 @@ public class UserController {
             @RequestPart("file") MultipartFile file
     ) {
         return userService.changeImage(authUser, file);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getUsers(
+            @RequestParam(required = false) String nickname
+    ) {
+        return ResponseEntity.ok(userService.getUsers(nickname));
     }
 }
